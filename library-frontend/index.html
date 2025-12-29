@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图书借阅系统</title>
+    <script>
+        // 检查登录状态，自动跳转
+        const token = localStorage.getItem('library_token');
+        if (token) {
+            const role = localStorage.getItem('library_role');
+            if (role === 'ADMIN') {
+                window.location.href = '/pages/admin/books.html';
+            } else {
+                window.location.href = '/pages/user/books.html';
+            }
+        } else {
+            window.location.href = '/pages/login.html';
+        }
+    </script>
+</head>
+<body>
+    <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+        <p>正在跳转...</p>
+    </div>
+</body>
+</html>

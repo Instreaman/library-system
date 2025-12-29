@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图书管理 - 管理员</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="text-center">
+            <h1 class="text-3xl font-bold mb-4">管理员页面</h1>
+            <p class="text-gray-600 mb-4">此页面将在第二天开发</p>
+            <button onclick="logout()" class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
+                退出登录
+            </button>
+        </div>
+    </div>
+    <script>
+        function logout() {
+            localStorage.clear();
+            window.location.href = '/pages/login.html';
+        }
+    </script>
+</body>
+</html>

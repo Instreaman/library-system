@@ -1,0 +1,76 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "启动后端",
+            "type": "shell",
+            "command": "mvn spring-boot:run",
+            "options": {
+                "cwd": "${workspaceFolder}/library"
+            },
+            "isBackground": true,
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "."
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^.*Tomcat initialized.*$",
+                    "endsPattern": "^.*Started LibraryApplication.*$"
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "启动前端",
+            "type": "shell",
+            "command": "python -m http.server 5500",
+            "options": {
+                "cwd": "${workspaceFolder}/library-frontend"
+            },
+            "isBackground": true,
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "启动全部服务",
+            "dependsOn": [
+                "启动后端",
+                "启动前端"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "停止后端",
+            "type": "shell",
+            "command": "lsof -ti:8080 | xargs -r kill -9",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "停止前端",
+            "type": "shell",
+            "command": "lsof -ti:5500 | xargs -r kill -9",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "停止全部服务",
+            "dependsOn": [
+                "停止后端",
+                "停止前端"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}

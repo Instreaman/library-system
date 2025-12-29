@@ -1,0 +1,25 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "启动后端服务",
+            "request": "launch",
+            "mainClass": "com.example.library.LibraryApplication",
+            "projectName": "library",
+            "cwd": "${workspaceFolder}/library",
+            "console": "integratedTerminal",
+            "args": "",
+            "vmArgs": "-Dspring.profiles.active=default"
+        },
+        {
+            "type": "java",
+            "name": "启动后端服务(调试模式)",
+            "request": "launch",
+            "mainClass": "com.example.library.LibraryApplication",
+            "projectName": "library",
+            "cwd": "${workspaceFolder}/library",
+            "console": "integratedTerminal"
+        }
+    ]
+}
