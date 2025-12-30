@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图书借阅系统开发任务说明书</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+        
+        body {
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            color: #2980b9;
+            margin: 25px 0 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        h3 {
+            color: #3498db;
+            margin: 20px 0 10px;
+        }
+        
+        h4 {
+            color: #555;
+            margin: 15px 0 8px;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .day-section {
+            background-color: #f0f7ff;
+            border-left: 4px solid #2ecc71;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 6px;
+        }
+        
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #ddd;
+        }
+        
+        .day-title {
+            color: #27ae60;
+            font-size: 1.4em;
+        }
+        
+        .day-hours {
+            background-color: #2ecc71;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: Consolas, Monaco, monospace;
+            color: #c7254e;
+        }
+        
+        pre {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: Consolas, Monaco, monospace;
+            font-size: 0.95em;
+        }
+        
+        .highlight {
+            background-color: #fffacd;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        
+        .checklist {
+            list-style-type: none;
+            margin: 15px 0;
+        }
+        
+        .checklist li {
+            padding: 8px 0 8px 30px;
+            position: relative;
+        }
+        
+        .checklist li:before {
+            content: "☐";
+            position: absolute;
+            left: 0;
+            color: #3498db;
+            font-size: 1.2em;
+        }
+        
+        .checklist li.done:before {
+            content: "✓";
+            color: #2ecc71;
+        }
+        
+        .page-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .page-item {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #d1e7f5;
+        }
+        
+        .page-item h4 {
+            margin-top: 0;
+            color: #2980b9;
+        }
+        
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .tech-item {
+            background-color: #e8f4fc;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            border: 1px solid #d1e7f5;
+        }
+        
+        .progress-container {
+            margin: 30px 0;
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 30px;
+            background-color: #3498db;
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .note {
+            background-color: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 6px 6px 0;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .day-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .day-hours {
+                margin-top: 10px;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>图书借阅系统开发任务说明书</h1>
+            <p class="subtitle">Spring Boot + MySQL + HTML + Axios 项目</p>
+        </header>
+        
+        <div class="section">
+            <h2>项目概述</h2>
+            <p>一个基于Spring Boot + MySQL + HTML的简易借书管理系统，包含管理员和普通用户两种角色，实现图书管理、借阅、归还等核心功能。项目分3天完成，每天4学时。</p>
+        </div>
+        
+        <div class="section">
+            <h2>技术栈</h2>
+            <div class="tech-stack">
+                <div class="tech-item">Spring Boot</div>
+                <div class="tech-item">Spring Security</div>
+                <div class="tech-item">JPA/MyBatis-Plus</div>
+                <div class="tech-item">MySQL</div>
+                <div class="tech-item">HTML</div>
+                <div class="tech-item">JavaScript (原生)</div>
+                <div class="tech-item">Axios</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>数据库设计</h2>
+            <pre>
+-- 图书表
+CREATE TABLE book (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(100) NOT NULL,
+    author VARCHAR(50),
+    publisher VARCHAR(50),
+    total_quantity INT DEFAULT 0,
+    borrowed_quantity INT DEFAULT 0,
+    available_quantity INT DEFAULT 0
+);
+
+-- 用户表
+CREATE TABLE user (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(30) UNIQUE NOT NULL,
+    real_name VARCHAR(30),
+    password VARCHAR(100) NOT NULL,
+    role ENUM('ADMIN', 'USER') NOT NULL
+);
+
+-- 借书记录表
+CREATE TABLE borrow_record (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    book_id INT NOT NULL,
+    user_id INT NOT NULL,
+    borrow_time DATETIME,
+    return_time DATETIME,
+    status ENUM('BORROWED', 'RETURNED') NOT NULL,
+    FOREIGN KEY (book_id) REFERENCES book(id),
+    FOREIGN KEY (user_id) REFERENCES user(id)
+);</pre>
+        </div>
+        
+        <div class="section">
+            <h2>页面清单 (共5个HTML文件)</h2>
+            <div class="page-list">
+                <div class="page-item">
+                    <h4>login.html</h4>
+                    <p>登录页面（管理员和普通用户共用）</p>
+                </div>
+                <div class="page-item">
+                    <h4>admin.html</h4>
+                    <p>管理员主页面</p>
+                </div>
+                <div class="page-item">
+                    <h4>book_record.html</h4>
+                    <p>图书借阅记录页面</p>
+                </div>
+                <div class="page-item">
+                    <h4>user.html</h4>
+                    <p>普通用户主页面</p>
+                </div>
+                <div class="page-item">
+                    <h4>borrow_book.html</h4>
+                    <p>借书页面</p>
+                </div>
+            </div>
+        </div>
+        
+        <h2>每日任务安排</h2>
+        
+        <div class="day-section">
+            <div class="day-header">
+                <h3 class="day-title">第一天任务（基础框架搭建和登录功能）</h3>
+                <div class="day-hours">4学时</div>
+            </div>
+            
+            <h4>目标：完成用户登录，根据角色跳转到不同页面</h4>
+            <p><strong>可展示功能</strong>：完成用户登录，根据角色跳转到不同页面</p>
+            
+            <h4>具体任务：</h4>
+            <ol>
+                <li><strong>项目初始化（1学时）</strong>
+                    <ul class="checklist">
+                        <li>创建Spring Boot项目</li>
+                        <li>添加依赖：Spring Web, Spring Security, MySQL Driver, JPA/MyBatis-Plus</li>
+                        <li>配置MySQL数据库连接</li>
+                        <li>创建数据库和表结构</li>
+                    </ul>
+                </li>
+                <li><strong>实体类和DAO层（1学时）</strong>
+                    <ul class="checklist">
+                        <li>创建三个实体类：Book, User, BorrowRecord</li>
+                        <li>创建对应的Repository/DAO接口</li>
+                        <li>添加JPA注解或MyBatis-Plus配置</li>
+                    </ul>
+                </li>
+                <li><strong>Spring Security配置（1学时）</strong>
+                    <ul class="checklist">
+                        <li>配置Spring Security认证和授权</li>
+                        <li>实现UserDetailsService</li>
+                        <li>配置登录成功后的跳转逻辑（根据角色跳转不同页面）</li>
+                        <li>配置密码加密</li>
+                    </ul>
+                </li>
+                <li><strong>前端登录页面和基础API（1学时）</strong>
+                    <ul class="checklist">
+                        <li>创建<code>login.html</code>：简单的登录表单</li>
+                        <li>使用Axios实现登录请求</li>
+                        <li>创建Controller处理登录请求</li>
+                        <li>实现统一的响应格式：<code>{status:1, message:'成功', data:...}</code></li>
+                    </ul>
+                </li>
+            </ol>
+            
+            <div class="note">
+                <h4>第一天验收标准</h4>
+                <ul class="checklist">
+                    <li class="done">项目能够正常启动</li>
+                    <li class="done">数据库表结构创建成功</li>
+                    <li class="done">可以访问登录页面</li>
+                    <li class="done">能够使用不同角色用户登录</li>
+                    <li class="done">登录后根据角色跳转到对应页面</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="day-section">
+            <div class="day-header">
+                <h3 class="day-title">第二天任务（管理员功能）</h3>
+                <div class="day-hours">4学时</div>
+            </div>
+            
+            <h4>目标：完成管理员功能</h4>
+            <p><strong>可展示功能</strong>：管理员可以登录，查看图书列表，新增、编辑、删除图书</p>
+            
+            <h4>具体任务：</h4>
+            <ol>
+                <li><strong>管理员页面和图书管理API（2学时）</strong>
+                    <ul class="checklist">
+                        <li>创建<code>admin.html</code>页面框架</li>
+                        <li>实现获取当前登录用户信息的API</li>
+                        <li>实现图书管理的Controller：获取所有图书列表、新增图书、编辑图书、删除图书</li>
+                        <li>前端渲染图书列表</li>
+                    </ul>
+                </li>
+                <li><strong>图书管理前端功能（2学时）</strong>
+                    <ul class="checklist">
+                        <li>在<code>admin.html</code>中实现图书列表展示</li>
+                        <li>实现新增图书功能（表单+提交）</li>
+                        <li>实现编辑图书功能（点击编辑弹出表单）</li>
+                        <li>实现删除图书功能（点击删除弹出确认）</li>
+                        <li>实现"查看借阅记录"按钮，点击后跳转到<code>book_record.html</code>并传递图书ID</li>
+                    </ul>
+                </li>
+                <li><strong>图书借阅记录页面（1学时）</strong>
+                    <ul class="checklist">
+                        <li>创建<code>book_record.html</code></li>
+                        <li>实现根据图书ID获取借阅记录的API</li>
+                        <li>前端渲染借阅记录列表</li>
+                    </ul>
+                </li>
+            </ol>
+            
+            <div class="note">
+                <h4>第二天验收标准</h4>
+                <ul class="checklist">
+                    <li class="done">管理员登录后能看到图书列表</li>
+                    <li class="done">管理员可以新增图书</li>
+                    <li class="done">管理员可以编辑图书信息</li>
+                    <li class="done">管理员可以删除图书</li>
+                    <li class="done">可以查看某本图书的借阅记录</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="day-section">
+            <div class="day-header">
+                <h3 class="day-title">第三天任务（普通用户功能）</h3>
+                <div class="day-hours">4学时</div>
+            </div>
+            
+            <h4>目标：完成普通用户功能</h4>
+            <p><strong>可展示功能</strong>：用户可以查看已借图书、归还图书、借阅新书</p>
+            
+            <h4>具体任务：</h4>
+            <ol>
+                <li><strong>用户页面和借阅功能API（2学时）</strong>
+                    <ul class="checklist">
+                        <li>创建<code>user.html</code>页面框架</li>
+                        <li>实现获取用户已借图书的API</li>
+                        <li>实现还书功能的API（更新借书记录和图书数量）</li>
+                        <li>实现获取可借图书列表的API（在库数量>0）</li>
+                        <li>实现借书功能的API（创建借书记录，更新图书数量）</li>
+                    </ul>
+                </li>
+                <li><strong>用户页面功能实现（1学时）</strong>
+                    <ul class="checklist">
+                        <li>在<code>user.html</code>中显示当前用户信息</li>
+                        <li>展示用户已借图书列表</li>
+                        <li>实现还书功能（每本书有"归还"按钮）</li>
+                        <li>添加"借新书"按钮，跳转到<code>borrow_book.html</code></li>
+                    </ul>
+                </li>
+                <li><strong>借书页面和系统完善（1学时）</strong>
+                    <ul class="checklist">
+                        <li>创建<code>borrow_book.html</code></li>
+                        <li>展示所有可借图书列表</li>
+                        <li>实现借书功能（每本书有"借出"按钮）</li>
+                        <li>系统整体测试和bug修复</li>
+                        <li>添加简单的样式提升可读性</li>
+                    </ul>
+                </li>
+            </ol>
+            
+            <div class="note">
+                <h4>第三天验收标准</h4>
+                <ul class="checklist">
+                    <li class="done">用户登录后能看到自己已借的图书</li>
+                    <li class="done">用户可以归还已借图书</li>
+                    <li class="done">用户可以进入借书页面</li>
+                    <li class="done">用户可以借阅可用的图书</li>
+                    <li class="done">所有功能完整，无重大bug</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>开发规范</h2>
+            
+            <h3>后端规范</h3>
+            <h4>1. 统一响应格式：</h4>
+            <pre>
+public class ApiResponse {
+    private int status; // 1成功，0失败
+    private String message;
+    private Object data;
+    
+    // 构造方法、getter、setter
+}</pre>
+            
+            <h4>2. Controller示例：</h4>
+            <pre>
+@RestController
+@RequestMapping("/api/books")
+public class BookController {
+    
+    @GetMapping
+    public ApiResponse getAllBooks() {
+        // 实现逻辑
+    }
+    
+    @PostMapping
+    public ApiResponse addBook(@RequestBody Book book) {
+        // 实现逻辑
+    }
+}</pre>
+            
+            <h3>前端规范</h3>
+            <h4>1. Axios配置：</h4>
+            <pre>
+axios.defaults.headers.common['Content-Type'] = 'application/json';</pre>
+            
+            <h4>2. 页面渲染示例：</h4>
+            <pre>
+// 获取数据并渲染
+axios.get('/api/books')
+  .then(response => {
+      if(response.data.status === 1) {
+          const books = response.data.data;
+          // 渲染逻辑
+      }
+  });</pre>
+        </div>
+        
+        <div class="section">
+            <h2>测试数据建议</h2>
+            <h3>初始用户：</h3>
+            <table>
+                <tr>
+                    <th>用户名</th>
+                    <th>密码</th>
+                    <th>角色</th>
+                </tr>
+                <tr>
+                    <td>admin</td>
+                    <td>admin123</td>
+                    <td>管理员</td>
+                </tr>
+                <tr>
+                    <td>user1</td>
+                    <td>user123</td>
+                    <td>普通用户</td>
+                </tr>
+                <tr>
+                    <td>user2</td>
+                    <td>user123</td>
+                    <td>普通用户</td>
+                </tr>
+            </table>
+            
+            <h3>初始图书：</h3>
+            <ul>
+                <li>至少添加5本不同图书</li>
+                <li>设置不同的库存数量（如：3-10本）</li>
+                <li>包含不同作者和出版社</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>注意事项</h2>
+            <ul class="checklist">
+                <li>每天开始前先检查前一天任务的完成情况</li>
+                <li>每个功能模块完成后进行简单测试</li>
+                <li>注意图书数量的同步更新（借书、还书时）</li>
+                <li>保持代码简洁，注释清晰</li>
+                <li>遇到问题及时记录并寻求解决方案</li>
+                <li>用户只能操作自己的借阅记录</li>
+                <li>管理员API需要ADMIN角色权限</li>
+                <li>所有API需要登录后才能访问</li>
+            </ul>
+        </div>
+        
+        <footer>
+            <p>图书借阅系统开发任务说明书 &copy; 2023</p>
+            <p>本说明书适用于3天（每天4学时）的开发计划，请按照每日任务安排进行开发</p>
+        </footer>
+    </div>
+
+    <script>
+        // 简单的交互功能：点击复选框切换状态
+        document.addEventListener('DOMContentLoaded', function() {
+            const checklistItems = document.querySelectorAll('.checklist li');
+            
+            checklistItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    if(this.classList.contains('done')) {
+                        this.classList.remove('done');
+                    } else {
+                        this.classList.add('done');
+                    }
+                });
+            });
+            
+            // 模拟进度条
+            const progressBar = document.createElement('div');
+            progressBar.className = 'progress-bar';
+            progressBar.textContent = '整体进度: 0%';
+            
+            const progressContainer = document.createElement('div');
+            progressContainer.className = 'progress-container';
+            progressContainer.appendChild(progressBar);
+            
+            const header = document.querySelector('header');
+            header.parentNode.insertBefore(progressContainer, header.nextSibling);
+            
+            // 更新进度条
+            function updateProgress() {
+                const totalItems = document.querySelectorAll('.checklist li').length;
+                const doneItems = document.querySelectorAll('.checklist li.done').length;
+                const progress = totalItems > 0 ? Math.round((doneItems / totalItems) * 100) : 0;
+                
+                progressBar.style.width = progress + '%';
+                progressBar.textContent = `整体进度: ${progress}%`;
+            }
+            
+            // 点击时更新进度
+            checklistItems.forEach(item => {
+                item.addEventListener('click', updateProgress);
+            });
+            
+            // 初始更新
+            updateProgress();
+        });
+    </script>
+</body>
+</html>
