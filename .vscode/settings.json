@@ -2,7 +2,7 @@
     "java.compile.nullAnalysis.mode": "automatic",
     "java.configuration.updateBuildConfiguration": "interactive",
 
-    // Live Server 配置：从 library-frontend 目录启动，端口 5500
+    // Live Server 配置
     "liveServer.settings.root": "/library-frontend",
     "liveServer.settings.port": 5501,
     "liveServer.settings.NoBrowser": false,

@@ -16,15 +16,12 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {
-        // 0. 预检请求直接放行，避免 CORS 拦截
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             return true;
         }
 
-        // 1. 从请求头中获取 Token
         String token = request.getHeader("Authorization");
         
-        // 2. 判断 Token 是否为空
         if (StrUtil.isBlank(token)) {
             writeCorsHeaders(response, request);
             response.setStatus(401);
@@ -33,12 +30,10 @@ public class LoginInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        // 3. 兼容 Bearer 前缀
         if (token.startsWith("Bearer ")) {
             token = token.substring(7);
         }
         
-        // 4. 验证 Token 是否有效
         if (!JwtUtils.verify(token)) {
             writeCorsHeaders(response, request);
             response.setStatus(401);
@@ -47,7 +42,6 @@ public class LoginInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        // 5. 将 Token 中的用户信息放入请求上下文
         Long userId = JwtUtils.getUserId(token);
         String username = JwtUtils.getUsername(token);
         String role = JwtUtils.getRole(token);
@@ -55,7 +49,6 @@ public class LoginInterceptor implements HandlerInterceptor {
         request.setAttribute("username", username);
         request.setAttribute("role", role);
 
-        // 6. Token 验证通过，放行
         return true;
     }
 
