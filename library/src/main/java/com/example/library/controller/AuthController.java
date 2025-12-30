@@ -7,11 +7,13 @@ import com.example.library.entity.User;
 import com.example.library.mapper.UserMapper;
 import com.example.library.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,17 +39,17 @@ public class AuthController {
 
         // 2. 验证用户是否存在
         if (user == null) {
-            return Result.error("用户不存在");
+            return Result.error(400, "用户不存在");
         }
 
         // 3. 验证密码
         if (!user.getPassword().equals(loginDTO.getPassword())) {
-            return Result.error("密码错误");
+            return Result.error(400, "密码错误");
         }
 
         // 4. 验证用户状态
         if (!"ACTIVE".equals(user.getStatus())) {
-            return Result.error("账号已被禁用");
+            return Result.error(400, "账号已被禁用");
         }
 
         // 5. 生成 Token
@@ -61,5 +63,29 @@ public class AuthController {
         data.put("realName", user.getRealName());
 
         return Result.success("登录成功", data);
+    }
+
+    /**
+     * 当前登录用户信息
+     */
+    @GetMapping("/me")
+    public Result<Map<String, Object>> currentUser(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        if (userId == null) {
+            return Result.error(401, "未登录");
+        }
+
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            return Result.error(404, "用户不存在");
+        }
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("id", user.getId());
+        data.put("username", user.getUsername());
+        data.put("realName", user.getRealName());
+        data.put("role", user.getRole());
+
+        return Result.success(data);
     }
 }

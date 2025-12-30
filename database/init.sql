@@ -53,4 +53,9 @@ INSERT INTO user (username, password, real_name, role, email, phone) VALUES
 -- 插入测试图书数据
 INSERT INTO book (title, author, isbn, publisher, total_quantity, available_quantity) VALUES
 ('Java核心技术', 'Cay S. Horstmann', '978-7-111-58595-5', '机械工业出版社', 5, 5),
-('Spring Boot实战', 'Craig Walls', '978-7-115-46393-0', '人民邮电出版社', 3, 3);
+('Spring Boot实战', 'Craig Walls', '978-7-115-46393-0', '人民邮电出版社', 3, 3),
+('Clean Code', 'Robert C. Martin', '9780132350884', 'Prentice Hall', 6, 6),
+('Effective Java', 'Joshua Bloch', '9780134685991', 'Addison-Wesley', 5, 5),
+('JavaScript: The Good Parts', 'Douglas Crockford', '9780596517748', 'O\'Reilly Media', 4, 4),
+('Redis 设计与实现', '黄健宏', '9787115335500', '人民邮电出版社', 7, 7),
+('深入理解计算机系统', 'Randal E. Bryant', '9787111544937', '机械工业出版社', 8, 8);
