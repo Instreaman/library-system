@@ -207,7 +207,11 @@ public class BookController {
         }
         int total = book.getTotalQuantity() == null ? 0 : book.getTotalQuantity();
         int available = book.getAvailableQuantity() == null ? 0 : book.getAvailableQuantity();
-        int borrowed = safeSubtract(total, available);
+        // 如果数据库已有 borrowedQuantity 列，则以存储值为准，否则回填计算值
+        Integer storedBorrowed = book.getBorrowedQuantity();
+        int borrowed = storedBorrowed != null ? storedBorrowed : safeSubtract(total, available);
+        // 校正借出数量不要为负
+        borrowed = Math.max(borrowed, 0);
         book.setBorrowedQuantity(borrowed);
     }
 

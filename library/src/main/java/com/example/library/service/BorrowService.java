@@ -67,7 +67,6 @@ public class BorrowService {
         if (available == null || available <= 0) {
             throw new IllegalStateException("该图书已无可借库存");
         }
-
         int borrowed = book.getBorrowedQuantity() == null ? 0 : book.getBorrowedQuantity();
 
         BorrowRecord record = new BorrowRecord();

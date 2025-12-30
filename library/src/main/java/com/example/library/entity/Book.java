@@ -27,6 +27,7 @@ public class Book {
     private Integer totalQuantity;
     
     private Integer availableQuantity;
+
     private Integer borrowedQuantity;
     
     private LocalDateTime createTime;
