@@ -10,5 +10,12 @@ const AuthAPI = {
             username,
             password
         });
+    },
+
+    /**
+     * 当前登录用户信息
+     */
+    me() {
+        return HttpUtil.get('/me');
     }
 };
