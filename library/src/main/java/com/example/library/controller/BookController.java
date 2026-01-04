@@ -97,8 +97,8 @@ public class BookController {
             return Result.error(404, "图书不存在");
         }
 
-        // 计算当前已借出数量
-        int borrowed = safeSubtract(existing.getTotalQuantity(), existing.getAvailableQuantity());
+        // 使用数据库中存储的已借出数量（真实的借阅数）
+        int borrowed = existing.getBorrowedQuantity() != null ? existing.getBorrowedQuantity() : 0;
 
         Integer newTotal = payload.getTotalQuantity() != null ? payload.getTotalQuantity() : existing.getTotalQuantity();
         if (newTotal == null || newTotal < 0) {
@@ -108,16 +108,8 @@ public class BookController {
             return Result.error(400, "总库存不能小于已借出数量");
         }
 
-        Integer newAvailable;
-        if (payload.getAvailableQuantity() != null) {
-            newAvailable = payload.getAvailableQuantity();
-            if (newAvailable < 0 || newAvailable > newTotal) {
-                return Result.error(400, "可借数量必须在 0 和总库存之间");
-            }
-            borrowed = safeSubtract(newTotal, newAvailable);
-        } else {
-            newAvailable = newTotal - borrowed;
-        }
+        // 可借数量 = 总库存 - 已借出数量（已借出数量保持不变）
+        int newAvailable = newTotal - borrowed;
 
         existing.setTitle(StrUtil.isNotBlank(payload.getTitle()) ? payload.getTitle() : existing.getTitle());
         existing.setAuthor(Objects.nonNull(payload.getAuthor()) ? payload.getAuthor() : existing.getAuthor());
