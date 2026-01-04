@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 图书借阅系统</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- RemixIcon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- NProgress -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css">
+    <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.2/dist/axios.min.js"></script>
+    
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+    
+    <!-- 配置和工具 -->
+    <script src="../js/config.js"></script>
+    <script src="../js/utils/storage.js"></script>
+    <script src="../js/utils/http.js"></script>
+    <script src="../js/api/auth.js"></script>
+    <script src="../js/modules/login.js"></script>
+
+    <style>
+        #nprogress .bar {
+            background: #000 !important;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen flex items-center justify-center px-4 py-12">
+        <div class="max-w-md w-full space-y-8" x-data="loginModule()" x-init="init()">
+            <!-- Logo 和标题 -->
+            <div class="text-center">
+                <div class="flex justify-center mb-4">
+                    <i class="ri-book-2-line text-6xl"></i>
+                </div>
+                <h2 class="text-3xl font-bold tracking-tight text-gray-900">
+                    图书借阅系统
+                </h2>
+                <p class="mt-2 text-sm text-gray-600">
+                    请登录您的账户
+                </p>
+            </div>
+
+            <!-- 登录表单 -->
+            <form class="mt-8 space-y-6" @submit.prevent="submitLogin">
+                <div class="space-y-4 rounded-md shadow-sm">
+                    <!-- 用户名 -->
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-gray-700 mb-1">
+                            用户名
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="ri-user-line text-gray-400"></i>
+                            </div>
+                            <input 
+                                id="username" 
+                                name="username" 
+                                type="text" 
+                                required
+                                x-model="username"
+                                class="appearance-none rounded-lg relative block w-full pl-10 px-3 py-3 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition"
+                                placeholder="请输入用户名"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- 密码 -->
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+                            密码
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="ri-lock-line text-gray-400"></i>
+                            </div>
+                            <input 
+                                id="password" 
+                                name="password" 
+                                type="password" 
+                                required
+                                x-model="password"
+                                class="appearance-none rounded-lg relative block w-full pl-10 px-3 py-3 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition"
+                                placeholder="请输入密码"
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 登录按钮 -->
+                <div>
+                    <button 
+                        type="submit"
+                        :disabled="loading"
+                        class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <span x-show="!loading">登录</span>
+                        <span x-show="loading" class="flex items-center">
+                            <i class="ri-loader-4-line animate-spin mr-2"></i>
+                            登录中...
+                        </span>
+                    </button>
+                </div>
+
+                <!-- 测试账号提示 -->
+                <div class="text-center text-sm text-gray-600 space-y-1">
+                    <!-- <p class="font-medium">测试账号：</p>
+                    <p>管理员：admin / admin123</p>
+                    <p>普通用户：user1 / user123</p> -->
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

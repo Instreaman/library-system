@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的借阅 - 用户</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- RemixIcon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <!-- NProgress -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css">
+    <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- AutoAnimate -->
+    <script src="https://cdn.jsdelivr.net/npm/@formkit/auto-animate@1.0.0-beta.3/dist/auto-animate.min.js"></script>
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.2/dist/axios.min.js"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+
+    <!-- 配置与业务脚本 -->
+    <script src="../../js/config.js"></script>
+    <script src="../../js/utils/storage.js"></script>
+    <script src="../../js/utils/http.js"></script>
+    <script src="../../js/api/auth.js"></script>
+    <script src="../../js/api/borrow.js"></script>
+    <script src="../../js/modules/user-books.js"></script>
+
+    <style>
+        [x-cloak] { display: none !important; }
+        #nprogress .bar { background: #000 !important; }
+    </style>
+</head>
+<body class="bg-gray-50" x-data="userBooksModule()" x-init="init()" x-cloak>
+    <div class="min-h-screen">
+        <!-- 顶部栏 -->
+        <header class="bg-white shadow-sm">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <span class="p-2 bg-black text-white rounded-lg"><i class="ri-book-2-line text-xl"></i></span>
+                    <div>
+                        <h1 class="text-xl font-semibold text-gray-900">我的借阅</h1>
+                        <p class="text-sm text-gray-500">查看并归还已借图书</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3 text-sm text-gray-700">
+                    <div class="hidden sm:flex flex-col text-right">
+                        <span x-text="user?.realName || user?.username || '用户'"></span>
+                        <span class="text-gray-500">普通用户</span>
+                    </div>
+                    <button @click="goBorrow" class="inline-flex items-center px-3 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition text-sm">
+                        <i class="ri-add-line mr-2"></i>去借书
+                    </button>
+                    <button @click="logout" class="inline-flex items-center px-3 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition">
+                        <i class="ri-logout-box-r-line mr-2"></i>退出
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+            <div class="bg-white shadow rounded-xl overflow-hidden">
+                <div class="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-gray-100">
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-900">已借图书</h2>
+                        <p class="text-sm text-gray-500">借出状态、借阅时间、归还操作</p>
+                    </div>
+                </div>
+                <div class="overflow-x-auto" x-init="$nextTick(() => window.autoAnimate && window.autoAnimate($refs.recordTable))">
+                    <table class="min-w-full divide-y divide-gray-200" x-ref="recordTable">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">书名</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">借出时间</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">应还时间</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
+                                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <template x-if="loading">
+                                <tr>
+                                    <td colspan="5" class="px-4 py-6 text-center text-gray-500">加载中...</td>
+                                </tr>
+                            </template>
+                            <template x-if="!loading && records.length === 0">
+                                <tr>
+                                    <td colspan="5" class="px-4 py-6 text-center text-gray-500">暂无借阅记录，去借一本书吧</td>
+                                </tr>
+                            </template>
+                            <template x-for="item in records" :key="item.id">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 text-sm text-gray-900">
+                                        <div class="font-medium" x-text="item.title || '未知书名'"></div>
+                                        <div class="text-xs text-gray-500" x-text="item.author || item.publisher || ''"></div>
+                                    </td>
+                                    <td class="px-4 py-3 text-sm text-gray-700" x-text="formatDate(item.borrowDate)"></td>
+                                    <td class="px-4 py-3 text-sm text-gray-700" x-text="formatDate(item.dueDate)"></td>
+                                    <td class="px-4 py-3 text-sm">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" :class="{
+                                            'bg-green-50 text-green-700': item.status === 'RETURNED',
+                                            'bg-amber-50 text-amber-700': item.status === 'BORROWED',
+                                            'bg-red-50 text-red-700': item.status === 'OVERDUE'
+                                        }" x-text="statusLabel(item.status)"></span>
+                                    </td>
+                                    <td class="px-4 py-3 text-center text-sm">
+                                        <template x-if="item.status === 'BORROWED'">
+                                            <button @click="handleReturn(item)" class="px-3 py-1 text-xs bg-black text-white rounded-lg hover:bg-gray-800 transition">归还</button>
+                                        </template>
+                                        <template x-if="item.status !== 'BORROWED'">
+                                            <span class="text-gray-400 text-xs">--</span>
+                                        </template>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

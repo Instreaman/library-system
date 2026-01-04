@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>借书 - 用户</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- RemixIcon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <!-- NProgress -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css">
+    <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- AutoAnimate -->
+    <script src="https://cdn.jsdelivr.net/npm/@formkit/auto-animate@1.0.0-beta.3/dist/auto-animate.min.js"></script>
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.2/dist/axios.min.js"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+
+    <!-- 配置与业务脚本 -->
+    <script src="../../js/config.js"></script>
+    <script src="../../js/utils/storage.js"></script>
+    <script src="../../js/utils/http.js"></script>
+    <script src="../../js/api/auth.js"></script>
+    <script src="../../js/api/borrow.js"></script>
+    <script src="../../js/modules/user-borrow.js"></script>
+
+    <style>
+        [x-cloak] { display: none !important; }
+        #nprogress .bar { background: #000 !important; }
+    </style>
+</head>
+<body class="bg-gray-50" x-data="userBorrowModule()" x-init="init()" x-cloak>
+    <div class="min-h-screen">
+        <header class="bg-white shadow-sm">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <button @click="goMyBorrow" class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200"><i class="ri-arrow-left-line"></i></button>
+                    <div>
+                        <h1 class="text-xl font-semibold text-gray-900">可借图书</h1>
+                        <p class="text-sm text-gray-500">选择一本书立即借阅</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3 text-sm text-gray-700">
+                    <div class="hidden sm:flex flex-col text-right">
+                        <span x-text="user?.realName || user?.username || '用户'"></span>
+                        <span class="text-gray-500">普通用户</span>
+                    </div>
+                    <button @click="logout" class="inline-flex items-center px-3 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition">
+                        <i class="ri-logout-box-r-line mr-2"></i>退出
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+            <div class="bg-white shadow rounded-xl p-4 sm:p-6 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div class="relative w-full sm:w-72">
+                        <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" placeholder="搜索书名/作者/出版社" x-model="keyword" @keydown.enter.prevent="fetchBooks" class="w-full pl-10 pr-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900">
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button @click="fetchBooks" class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 text-sm">搜索</button>
+                        <button @click="goMyBorrow" class="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 text-sm">返回我的借阅</button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto" x-init="$nextTick(() => window.autoAnimate && window.autoAnimate($refs.availableTable))">
+                    <table class="min-w-full divide-y divide-gray-200" x-ref="availableTable">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">书名</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">作者</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">出版社</th>
+                                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">可借数量</th>
+                                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <template x-if="loading">
+                                <tr><td colspan="5" class="px-4 py-6 text-center text-gray-500">加载中...</td></tr>
+                            </template>
+                            <template x-if="!loading && books.length === 0">
+                                <tr><td colspan="5" class="px-4 py-6 text-center text-gray-500">暂无可借图书</td></tr>
+                            </template>
+                            <template x-for="book in books" :key="book.id">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 text-sm text-gray-900">
+                                        <div class="font-medium" x-text="book.title"></div>
+                                        <div class="text-xs text-gray-500" x-text="book.isbn"></div>
+                                    </td>
+                                    <td class="px-4 py-3 text-sm text-gray-700" x-text="book.author || '-'" ></td>
+                                    <td class="px-4 py-3 text-sm text-gray-700" x-text="book.publisher || '-'" ></td>
+                                    <td class="px-4 py-3 text-center text-sm text-emerald-600 font-semibold" x-text="book.availableQuantity ?? 0"></td>
+                                    <td class="px-4 py-3 text-center text-sm">
+                                        <button :disabled="(book.availableQuantity ?? 0) <= 0" @click="handleBorrow(book)" class="px-3 py-1 text-xs rounded-lg text-white" :class="(book.availableQuantity ?? 0) > 0 ? 'bg-black hover:bg-gray-800' : 'bg-gray-300 cursor-not-allowed'">
+                                            立即借阅
+                                        </button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
++</body>
++</html>
